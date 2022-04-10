@@ -16,8 +16,8 @@ public class StockInfo {
 
     private String supplier;
 
-    @NotNull(message = "Stock name should not be null!")
-    private String name;
+    @NotNull(message = "Enter associated product Id")
+    private String productId;
 
     @Min(0)
     private Long quantity;

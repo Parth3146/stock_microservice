@@ -1,6 +1,7 @@
 package com.example.g3s.exception;
 
 import com.example.g3s.model.APIError;
+import com.example.g3s.model.ErrorSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,10 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         apiError.setStatus(HttpStatus.BAD_REQUEST);
         apiError.setCode("400");
         apiError.setTitle(e.getMessage());
-        apiError.setSource(request.getDescription(true));
+        ErrorSource es = new ErrorSource();
+        es.setParameter("quantity");
+        es.setPointer("N/A");
+        apiError.setSource(es);
         return new ResponseEntity(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
@@ -31,7 +35,10 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         apiError.setStatus(HttpStatus.NOT_FOUND);
         apiError.setCode("404");
         apiError.setTitle(e.getMessage());
-        apiError.setSource(request.getDescription(true));
+        ErrorSource es = new ErrorSource();
+        es.setParameter("id");
+        es.setPointer("N/A");
+        apiError.setSource(es);
         return new ResponseEntity(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
@@ -42,7 +49,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         FieldError fieldError = ex.getBindingResult().getFieldError();
         APIError apiError = new APIError();
         apiError.setStatus(HttpStatus.BAD_REQUEST);
-        apiError.setSource(request.getDescription(true));
+        ErrorSource es = new ErrorSource();
+        es.setPointer(ex.getFieldError().getField());
+        apiError.setSource(es);
         apiError.setTitle(fieldError.getDefaultMessage());
         apiError.setCode("400");
 
