@@ -6,6 +6,7 @@ import com.example.g3s.model.Stock;
 import com.example.g3s.model.StockInfo;
 import com.example.g3s.model.StockResponse;
 import com.example.g3s.repository.StockRepo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,8 @@ public class StockService {
         for (Stock s: stockRepo.findAll()){
             if (s.getAttributes().getProductId().equals(stock.getProductId())){
                 Stock stock1 = new Stock(stock);
+                stock1.setType(Stock.TypeEnum.STOCK);
+                stock1.setId(s.getId());
                 stock1.getAttributes().setQuantity(
                         s.getAttributes().getQuantity() + stock.getQuantity()
                 );
@@ -44,17 +47,27 @@ public class StockService {
         return stockResponse;
     }
 
-    public StockResponse findStockById(String id) {
+    public StockResponse findStockByProductId(String id) {
 
         List<Stock> list = new ArrayList<>();
         for (Stock s: stockRepo.findAll()){
-            if(s.getAttributes().getProductId().equals(id))
-            list.add(s);
-            stockResponse = new StockResponse(list);
-            return stockResponse;
+            if(s.getAttributes().getProductId().equals(id)) {
+                list.add(s);
+                stockResponse = new StockResponse(list);
+                return stockResponse;
+            }
         }
         //if (stockRepo.findById(id).isEmpty())
-        throw new StockNotFoundException("No stock found with given stockId!");
+        throw new StockNotFoundException("No stock found with given ProductId!");
+    }
+
+    public StockResponse findStockByStockId(String id) {
+        if (stockRepo.findById(id).isEmpty())
+            throw new StockNotFoundException("No stock found with given stockId!");
+        List<Stock> list = new ArrayList<>();
+        list.add(stockRepo.findById(id).get());
+        stockResponse = new StockResponse(list);
+        return stockResponse;
     }
 
     public StockResponse removeStock(StockInfo stockInfo, String id){
